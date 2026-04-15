@@ -479,6 +479,63 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
   }
 });
 
+const deleteUser = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userToDelete = await User.findById(id);
+
+    if (!userToDelete) {
+      console.log("User not found");
+      throw new ApiError(404, "User not found");
+    }
+
+    await User.findByIdAndDelete(id);
+    return res
+      .status(200)
+      .json(new ApiResponse(200, {}, "User deleted successfully"));
+  } catch (error) {
+    console.log("Error while deleting user: ", error);
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Something went wrong while deleting user",
+    );
+  }
+});
+
+const updateUserRole = asyncHandler(async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { role } = req.body;
+    if (!["admin", "user"].includes(role)) {
+      console.log("Invalid role");
+      throw new ApiError(400, "Invalid role");
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { $set: { role } },
+      { new: true, runValidators: true },
+    ).select("-password -refreshToken -verifyToken -verifyTokenExpiry");
+
+    if (!updatedUser) {
+      console.log("User not found");
+      throw new ApiError(404, "User not found");
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, updatedUser, "User role updated successfully"),
+      );
+  } catch (error) {
+    console.log("Error while updating user role: ", error);
+    throw new ApiError(
+      error.statusCode || 500,
+      error.message || "Something went wrong while updating user's role",
+    );
+  }
+});
+
 export {
   registerUser,
   generateAccessandRefreshToken,
@@ -491,4 +548,6 @@ export {
   logOutUser,
   updateProfilePicture,
   changeCurrentPassword,
+  deleteUser,
+  updateUserRole,
 };

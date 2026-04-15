@@ -10,9 +10,11 @@ import {
   logOutUser,
   updateProfilePicture,
   changeCurrentPassword,
+  deleteUser,
+  updateUserRole,
 } from "../controllers/user.controller.js";
 
-import { verifyJWT, upload } from "../middlewares/index.js";
+import { verifyJWT, upload, isAdmin } from "../middlewares/index.js";
 
 const router = Router();
 
@@ -30,5 +32,7 @@ router
 router.route("/me").get(verifyJWT, getCurrentUser);
 router.route("/change/password").patch(verifyJWT, changeCurrentPassword);
 router.route("/refresh-token").post(refreshAccessToken);
+router.route("/delete/user/:id").delete(verifyJWT, isAdmin, deleteUser);
+router.route("/update/user/:id").patch(verifyJWT, isAdmin, updateUserRole);
 
 export default router;
