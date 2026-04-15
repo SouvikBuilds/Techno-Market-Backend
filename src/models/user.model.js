@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 
 import bcrypt from "bcrypt";
 import { config } from "../config/config.js";
+import aggregatePaginate from "mongoose-aggregate-paginate-v2";
 
 const userSchema = new Schema(
   {
@@ -107,7 +108,7 @@ userSchema.methods.isPasswordCorrect = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
 
-userSchema.methods.generateAccessToken = async function () {
+userSchema.methods.generateAccessToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -119,7 +120,7 @@ userSchema.methods.generateAccessToken = async function () {
   );
 };
 
-userSchema.methods.generateRefreshToken = async function () {
+userSchema.methods.generateRefreshToken = function () {
   return jwt.sign(
     {
       _id: this._id,
@@ -128,5 +129,5 @@ userSchema.methods.generateRefreshToken = async function () {
     { expiresIn: config.REFRESH_TOKEN_EXPIRY },
   );
 };
-
+userSchema.plugin(aggregatePaginate);
 export const User = model("User", userSchema);
