@@ -30,6 +30,7 @@ const addProduct = asyncHandler(async (req, res) => {
       category === undefined ||
       price === undefined
     ) {
+      console.log("All fields are required");
       throw new ApiError(400, "All fields are required");
     }
 
@@ -77,6 +78,7 @@ const addProduct = asyncHandler(async (req, res) => {
         new ApiResponse(201, createdProduct, "new product added successfully"),
       );
   } catch (error) {
+    console.log("Error while adding product.", error);
     throw new ApiError(
       error.statusCode || 500,
       error.message || "Something went wrong while adding product",
@@ -86,6 +88,7 @@ const addProduct = asyncHandler(async (req, res) => {
 
 const getAllProducts = asyncHandler(async (req, res) => {
   try {
+    const { id } = req.params;
     const {
       page = 1,
       limit = 10,
@@ -176,7 +179,7 @@ const getAllProducts = asyncHandler(async (req, res) => {
         new ApiResponse(200, products, "All products fetched successfully"),
       );
   } catch (error) {
-    console.log("Error while getting products.");
+    console.log("Error while getting products.", error);
     throw new ApiError(
       error?.statusCode || 500,
       error?.message || "Error while getting products.",
@@ -188,7 +191,7 @@ const getProductById = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
     if (!isValidObjectId(id)) {
-      console.log("Invalid prodcut id.");
+      console.log("Invalid product id.");
       throw new ApiError(400, "Invalid product id");
     }
     const product = await Product.findById(id);
@@ -201,7 +204,7 @@ const getProductById = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, product, "Product fetched successfully"));
   } catch (error) {
-    console.log("Error getting product by id.");
+    console.log("Error getting product by id.", error);
     throw new ApiError(
       error?.statusCode || 500,
       error?.message || "Error getting product by id.",
@@ -275,6 +278,7 @@ const updateProduct = asyncHandler(async (req, res) => {
         new ApiResponse(200, updatedProduct, "Product Updated Successfully"),
       );
   } catch (error) {
+    console.log("Error while updating product.", error);
     throw new ApiError(
       error?.statusCode || 500,
       error?.message || "Error while updating product.",

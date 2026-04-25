@@ -20,19 +20,19 @@ router.route("/add").post(
   addProduct,
 );
 
-router.route("/").get(getAllProducts);
-router.route("/:id").get(getProductById);
+router.route("/:id").get(getAllProducts);
+router.route("/product/:id").get(getProductById);
 
-router.route("/:id").patch(verifyJWT, updateProduct);
+router.route("/product/:id").patch(verifyJWT, updateProduct);
 
 router
-  .route("/update-icon-image/:id")
+  .route("/product/update-icon-image/:id")
   .patch(
     verifyJWT,
     upload.fields([{ name: "productImage", maxCount: 1 }]),
     updateProductIconImage,
   );
 
-router.route("/:id").delete(verifyJWT, deleteProduct);
+router.route("/delete-product/:id").delete(verifyJWT, deleteProduct);
 
 export default router;
