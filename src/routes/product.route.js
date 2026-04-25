@@ -26,7 +26,7 @@ router.route("/add").post(
   addProduct,
 );
 
-router.route("/").get(verifyJWT, getAllProducts);
+router.route("/").get(getAllProducts);
 router.route("/:id").get(verifyJWT, getProductById);
 router.route("/:id").patch(verifyJWT, updateProduct);
 router
