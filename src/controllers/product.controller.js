@@ -86,11 +86,6 @@ const addProduct = asyncHandler(async (req, res) => {
 
 const getAllProducts = asyncHandler(async (req, res) => {
   try {
-    const id = req.user?._id;
-    if (!isValidObjectId(id)) {
-      console.log("Invalid user id.");
-      throw new ApiError(400, "Invalid user id");
-    }
     const {
       page = 1,
       limit = 10,
