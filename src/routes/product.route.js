@@ -22,7 +22,7 @@ router.route("/add").post(
 );
 
 router.route("/all-products").get(getAllProducts);
-router.route("/products/:id").get(getAllProductsBySellerId);
+router.route("/seller-products/:id").get(getAllProductsBySellerId);
 router.route("/product/:id").get(getProductById);
 
 router.route("/product/:id").patch(verifyJWT, updateProduct);
