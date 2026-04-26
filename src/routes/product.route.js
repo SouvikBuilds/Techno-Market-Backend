@@ -1,6 +1,7 @@
 import { verifyJWT, upload } from "../middlewares/index.js";
 import {
   addProduct,
+  getAllProductsBySellerId,
   getAllProducts,
   getProductById,
   updateProduct,
@@ -20,7 +21,8 @@ router.route("/add").post(
   addProduct,
 );
 
-router.route("/:id").get(getAllProducts);
+router.route("/all-products").get(getAllProducts);
+router.route("/products/:id").get(getAllProductsBySellerId);
 router.route("/product/:id").get(getProductById);
 
 router.route("/product/:id").patch(verifyJWT, updateProduct);

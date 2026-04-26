@@ -86,7 +86,7 @@ const addProduct = asyncHandler(async (req, res) => {
   }
 });
 
-const getAllProducts = asyncHandler(async (req, res) => {
+const getAllProductsBySellerId = asyncHandler(async (req, res) => {
   try {
     const { id } = req.params;
     const {
@@ -183,6 +183,101 @@ const getAllProducts = asyncHandler(async (req, res) => {
     throw new ApiError(
       error?.statusCode || 500,
       error?.message || "Error while getting products.",
+    );
+  }
+});
+
+const getAllProducts = asyncHandler(async (req, res) => {
+  try {
+    const {
+      page = 1,
+      limit = 10,
+      search,
+      category,
+      minPrice,
+      maxPrice,
+      availability,
+      sortBy = "createdAt",
+      sortOrder = "desc",
+    } = req.query;
+    const pipeline = [];
+
+    // search filter
+    if (search) {
+      pipeline.push({
+        $match: {
+          title: { $regex: search, $options: "i" },
+        },
+      });
+    }
+
+    // category filter
+    if (category) {
+      pipeline.push({
+        $match: {
+          category: category,
+        },
+      });
+    }
+
+    // price filter
+    if (maxPrice || minPrice) {
+      const priceFilter = {};
+      if (maxPrice) {
+        priceFilter.$lte = Number(maxPrice);
+      }
+      if (minPrice) {
+        priceFilter.$gte = Number(minPrice);
+      }
+
+      pipeline.push({
+        $match: {
+          price: priceFilter,
+        },
+      });
+    }
+
+    // availability filter
+    if (availability !== undefined) {
+      const parsedAvailability =
+        availability === "true" || availability === true;
+      pipeline.push({
+        $match: {
+          availability: parsedAvailability,
+        },
+      });
+    }
+
+    const allowedSortFields = ["price", "createdAt", "title"];
+
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : "createdAt";
+
+    pipeline.push({
+      $sort: {
+        [sortField]: sortOrder === "asc" ? 1 : -1,
+      },
+    });
+
+    const pageNumber = Math.max(1, parseInt(page, 10) || 1);
+    const limitNumber = Math.max(1, parseInt(limit, 10) || 10);
+
+    const options = {
+      page: pageNumber,
+      limit: limitNumber,
+    };
+
+    const aggregate = Product.aggregate(pipeline);
+    const products = await Product.aggregatePaginate(aggregate, options);
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, products, "All products fetched successfully"),
+      );
+  } catch (error) {
+    console.log("Error while getting all products.", error);
+    throw new ApiError(
+      error?.statusCode || 500,
+      error?.message || "Error while getting all products.",
     );
   }
 });
@@ -395,6 +490,7 @@ const deleteProduct = asyncHandler(async (req, res) => {
 
 export {
   addProduct,
+  getAllProductsBySellerId,
   getAllProducts,
   getProductById,
   updateProduct,
