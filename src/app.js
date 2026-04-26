@@ -10,7 +10,7 @@ app.use(express.static("public"));
 app.use(cookieParser());
 app.use(
   cors({
-    origin: config.ORIGIN || "http://localhost:5173",
+    origin: config.ORIGIN || "http://localhost:5174",
     credentials: true,
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"],
     optionsSuccessStatus: 204,
