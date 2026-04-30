@@ -23,8 +23,10 @@ app.get("/", (req, res) => {
 // routes import
 import authRouter from "./routes/auth.route.js";
 import productRouter from "./routes/product.route.js";
+import interestRouter from "./routes/interest.route.js";
 
 // routes declaration
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/products", productRouter);
+app.use("/api/v1/interest", interestRouter);
 export default app;
