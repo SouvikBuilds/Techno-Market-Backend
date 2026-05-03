@@ -22,7 +22,7 @@ const swaggerOptions = {
         description: "Development server",
       },
       {
-        url: "https://api.collegemarketplace.com",
+        url: "https://techno-mart-backend.onrender.com/",
         description: "Production server",
       },
     ],
