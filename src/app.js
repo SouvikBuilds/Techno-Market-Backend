@@ -1,7 +1,9 @@
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import swaggerUi from "swagger-ui-express";
 import { config } from "./config/config.js";
+import { swaggerSpec } from "./swagger.js";
 
 const app = express();
 app.use(express.json({ limit: "16kb" }));
@@ -20,6 +22,20 @@ app.use(
 app.get("/", (req, res) => {
   res.json({ message: "Hello World" });
 });
+
+// Swagger UI setup
+app.use(
+  "/api/docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    swaggerOptions: {
+      defaultModelsExpandDepth: 1,
+      defaultModelExpandDepth: 1,
+    },
+    customCss: ".topbar { display: none }",
+  }),
+);
+
 // routes import
 import authRouter from "./routes/auth.route.js";
 import productRouter from "./routes/product.route.js";
